@@ -1,6 +1,6 @@
 /**
  *
- * deli-player - a jplayer with soundcloud and bandcamp api lookups
+ * deli-player - an audiojs / youtube player with soundcloud, echonest, lastfm, and bandcamp api hooks
  *
  * author: Mark Lewis
  */

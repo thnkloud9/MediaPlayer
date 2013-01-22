@@ -10,6 +10,8 @@ var deliPlayer = {
     /* bandcamp vars */
     bandcampApiKey: 'vatnajokull',
     bandcampDomain: 'http://api.bandcamp.com/api',
+    bandcampBands: [],
+    bandcampAlbums: [],
     bandcampTracks: [],
     
     /* soundcloud vars */
@@ -215,58 +217,46 @@ var deliPlayer = {
         deliPlayer.log('loading lastfm events...');
 
         params['artist'] = bandName;
+        params['callback'] = 'deliPlayer.addLastFMEvents';
+
         deliPlayer._sendLastFM('artist.getEvents', params, function(results) {
-            try {
-                results = JSON.parse(results);
-            } catch(e) {
-                console.log(e);
-                callback();
-                return false;
-            }
-
-            if (!results.events.event) {
-                callback();
-                return false;
-            }
-           
-            for (var e in results.events.event) {
-                var event = results.events.event[e];
-
-                deliPlayer.allEvents.push(event);
-            } 
+            eval(results);
             callback(deliPlayer.allEvents);
  
         });
+    },
+
+    addLastFMEvents: function(results) {
+        deliPlayer.log('loading lastfm events...');
+        for (var e in results.events.event) {
+            var event = results.events.event[e];
+
+            deliPlayer.allEvents.push(event);
+        } 
     },
 
     loadLastFMTopTracks: function(bandName, callback) {
         var params = [];
         
         params['artist'] = bandName;
+        params['callback'] = 'deliPlayer.addLastFMTracks';
+
         deliPlayer._sendLastFM('artist.getTopTracks', params, function(results) {
-            try {
-                results = JSON.parse(results);
-            } catch(e) {
-                console.log(e);
-                callback();
-                return false;
-            }
-
-            if (!results.toptracks) {
-                callback();
-                return false;
-            }
-
-            deliPlayer.log('loading last.fm top tracks');
-
-            for (var t in results.toptracks.track) {
-                var track = results.toptracks.track[t];
-                deliPlayer.lastFMTopTracks.push(track);
-                deliPlayer.topTrackTitles[track.name.toLowerCase()] = track.playcount;
-                deliPlayer.allTrackTitles.push(track.name.toLowerCase());
-            }
+            eval(results);
             callback();
         });
+    },
+
+    addLastFMTracks: function(results) {
+
+        deliPlayer.log('loading last.fm top tracks');
+        for (var t in results.toptracks.track) {
+            var track = results.toptracks.track[t];
+
+            deliPlayer.lastFMTopTracks.push(track);
+            deliPlayer.topTrackTitles[track.name.toLowerCase()] = track.playcount;
+            deliPlayer.allTrackTitles.push(track.name.toLowerCase());
+        }
     },
 
     /**
@@ -303,6 +293,10 @@ var deliPlayer = {
         return false;
     },
 
+    /**
+     * Soundcloud functions
+     *
+     */
     loadSoundcloudTracks: function(bandName, callback) {
         SC.get('/tracks', { q: bandName }, function(tracks) {
             for (var t in tracks) {
@@ -329,79 +323,83 @@ var deliPlayer = {
 
     },
 
+    /**
+     * Bandcamp functions
+     *
+     */
     loadBandcampTracks: function(bandName, callback) {
         var bandEndpoint = "band/3/search"
         var bandParams = [];
 
         bandParams['name'] = encodeURIComponent(bandName);
         bandParams['name'] = bandName;
+        bandParams['callback'] = 'deliPlayer.addBandcampBandIds';
 
         /* get all matching bands */
-        deliPlayer._sendBandcamp(bandEndpoint, bandParams, function(bands) {
-            try {
-                bands = JSON.parse(bands);
-            } catch(e) {
-                /* bandcamp is really picky about formatting, not sure why but it fails with 400 quite a bit */
-                callback();
-                return false;
-            }
-
-            var bandIds = [];
-            for (var b in bands.results) {
-                var band = bands.results[b];
-                bandIds.push(band.band_id);
-            }
+        deliPlayer._sendBandcamp(bandEndpoint, bandParams, function(band_results) {
+            //eval(band_results);
+            deliPlayer.addBandcampBandIds(band_results);
 
             var albumEndpoint = 'band/3/discography';
             var albumParams = [];
-            var bandIdsString = bandIds.join(',');
+            var bandIdsString = deliPlayer.bandcampBands.join(',');
+
             albumParams['band_id'] = bandIdsString;
+            albumParams['callback'] = 'deliPlayer.addBandcampAlbumIds';
      
             /* get all albums for all matching bands */
-            deliPlayer._sendBandcamp(albumEndpoint, albumParams, function(albums) {
-                albums = JSON.parse(albums);
-                if (!albums.discography) {
-                    callback();
-                    return true;
-                } 
-                var processedAlbums = 0;
-                var totalAlbums =  albums.discography.length;
+            deliPlayer._sendBandcamp(albumEndpoint, albumParams, function(album_results) {
+                //eval(album_results);
+                deliPlayer.addBandcampAlbumIds(album_results);
 
-                for (var a in albums.discography) {
-                    var album = albums.discography[a];
-                    var albumInfoEndpoint = "album/2/info";
-                    var albumInfoParams = [];
-                    var bandName = album.artist;
-                    albumInfoParams['album_id'] = album.album_id;
+                var albumInfoEndpoint = "album/2/info";
+                var albumInfoParams = [];
+                var albumIdsString = deliPlayer.bandcampAlbums.join(',');
+                albumInfoParams['album_id'] = albumIdsString;
+                albumInfoParams['callback'] = 'deliPlayer.addBandcampTracks';
 
-                    /* get album info (track ids) */
-                    (function(totalAlbums, bandName){
-                        deliPlayer._sendBandcamp(albumInfoEndpoint, albumInfoParams, function(tracks) {
-                            tracks = JSON.parse(tracks);
-
-                            for (var t in tracks.tracks) {
-                                var track = tracks.tracks[t];
-                                var playlistTrack = {
-                                    'artist': bandName,
-                                    'albumName': tracks.title,
-                                    'poster': tracks.large_art_url,
-                                    'albumAbout': tracks.about,
-                                    'title': track.title,
-                                    'trackAbout': track.about,
-                                    'mp3': track.streaming_url,
-                                    'trackDuration': track.duration
-                                };
-                                deliPlayer.bandcampTracks.push(playlistTrack);
-                            }
-                            processedAlbums = processedAlbums+1;
-                            if (processedAlbums == totalAlbums) {
-                                callback(deliPlayer.bandcampTracks);
-                            }
-                        });
-                    })(totalAlbums, bandName);
-                }
-            }); 
+                /* get album info (track ids) */
+                deliPlayer._sendBandcamp(albumInfoEndpoint, albumInfoParams, function(track_results) {
+                    //eval(track_results);
+                    deliPlayer.addBandcampTracks(track_results);
+                    callback(deliPlayer.bandcampTracks);
+                }); 
+            });
         });
+    },
+
+    addBandcampBandIds: function(results) {
+        deliPlayer.log('loading bandcamp bands...');
+        for (var b in results.results) {
+            var band = results.results[b];
+            deliPlayer.bandcampBands.push(band.band_id);
+        }
+    },
+
+    addBandcampAlbumIds: function(results) {
+        deliPlayer.log('loading bandcamp albums...');
+        for (var a in results.discography) {
+            var album = results.discography[a];
+            deliPlayer.bandcampAlbums.push(album.album_id);
+        }
+    },
+
+    addBandcampTracks: function(results) {
+        deliPlayer.log('loading bandcamp tracks...');
+        for (var t in results.tracks) {
+            var track = results.tracks[t];
+            var playlistTrack = {
+                'artist': '',
+                'albumName': results.title,
+                'poster': results.large_art_url,
+                'albumAbout': results.about,
+                'title': track.title,
+                'trackAbout': track.about,
+                'mp3': track.streaming_url,
+                'trackDuration': track.duration
+            };
+            deliPlayer.bandcampTracks.push(playlistTrack);
+        }
     },
 
     /**
@@ -413,7 +411,7 @@ var deliPlayer = {
         
         params['key'] = deliPlayer.bandcampApiKey;
 
-        deliPlayer._send(url, params, callback);
+        deliPlayer._send(url, params, 'jsonp', callback);
     },
 
     _sendLastFM: function(endpoint, params, callback) {
@@ -423,7 +421,7 @@ var deliPlayer = {
         params['api_key'] = deliPlayer.lastFMApiKey;
         params['format'] = 'json';
 
-        deliPlayer._send(url, params, callback);
+        deliPlayer._send(url, params, '', callback);
     },
 
     _sendEchonest: function(endpoint, params, callback) {
@@ -432,10 +430,10 @@ var deliPlayer = {
         params['api_key'] = deliPlayer.echonestApiKey;
         params['format'] = 'jsonp';
 
-        deliPlayer._send(url, params, callback);
+        deliPlayer._send(url, params, '', callback);
     },
 
-    _send: function(url, params, callback) {
+    _send: function(url, params, dataType, callback) {
         var first = true;
     
         // show loading page
@@ -455,15 +453,16 @@ var deliPlayer = {
             callback(this.cache[url]);
         } else {
             $.ajax({
-                url: deliPlayer.proxyUrl + "?url=" + encodeURIComponent(url),
+                url: url,
                 type: 'get',
+                dataType: dataType,
                 success: function(response) {
                     deliPlayer.cache[url] = response
                     deliPlayer.hideLoading();
                     callback(response);
                 },
                 error: function(errorObj, textStatus, errorMsg) {
-                    console.log(JSON.stringify(errorMsg));
+                    console.log(url + ' -- ' + JSON.stringify(errorMsg));
                     callback();
                 }
             });

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<link rel="stylesheet" href="css/eggplant/jquery-ui-1.9.2.custom.css" />
+<link rel="stylesheet" href="css/skin.css" />
+<link rel="stylesheet" href="css/audiojs_player.css" />
+<link rel="stylesheet" href="css/media_player.css" />
+
+<script type="text/javascript" src="http://swfobject.googlecode.com/svn/trunk/swfobject/swfobject.js"></script>
+<script src="http://connect.soundcloud.com/sdk.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="js/jquery.jcarousel.min.js"></script>
+<script type="text/javascript" src="js/audiojs/audio.min.js"></script>
+<script type="text/javascript" src="js/underscore-min.js"></script>
+<script type="text/javascript" src="js/async.js"></script>
+
+<script src="js/deli-player.js"></script>
+
+<script>
+$(function() {
+
+    // tabs setup
+    $('.tabs').tabs();
+
+    // Setup the player to autoplay the next track
+    var a = audiojs.createAll({
+      css: false,
+      trackEnded: function() {
+        var next = $('.audio-link.playing').next();
+        if (!next.length) next = $('audio-link').first();
+        next.addClass('playing').siblings().removeClass('playing');
+        audio.load($('a', next).attr('data-src'));
+        audio.play();
+      }
+    });
+
+    // Load the audio element
+    var audio = a[0];
+
+    // Load in a track on click
+    $('.audio-link').live('click', function(e) {
+        e.preventDefault();
+        $(this).addClass('playing').siblings().removeClass('playing');
+        audio.load($('a', this).attr('data-src'));
+        audio.play();
+        $('#audio-image-container').html("<img src='" + $('a', this).attr('data-img') + "' width='300px' height='268px'>");
+        var details = $('a', this).attr('data-title') + " <em>by</em> " + $('a', this).attr('data-artist');
+        $('.track-details').html(details);  
+    });
+
+    $('.show-audio').live('click', function() {
+        $('#audio-container').show();
+        $('#video-container').hide();
+    });
+
+    $('.show-video').live('click', function() {
+        audio.pause();
+        $('#audio-container').hide();
+        $('#video-container').show();
+    });
+
+  });
+</script>
+
+</head>
+</head>
+<body>
+    <div id="video-container">
+        <object id="player"></object>
+    </div>
+
+    <div id='audio-container'>
+        <div id='audio-image-container'><div style='width: 300px; height: 268px;'></div></div>
+        <audio></audio>
+        <div class='track-details'></div>
+    </div>
+
+    <div id='media-tab' class='tabs'>
+        <ul>
+            <li><a href='#tabs-1' class='dp-tab show-video'>Youtube Videos</a></li>
+            <li><a href='#tabs-2' class='dp-tab show-audio'>Soundcloud Tracks</a></li>
+            <li><a href='#tabs-3' class='dp-tab show-audio'>Bandcamp Tracks</a></li>
+            <li><a href='#tabs-4' class='dp-tab show-info'>Info</a></li>
+        </ul>
+        <div id='tabs-1'>
+            <div id="videos2"></div>
+        </div> 
+        <div id='tabs-2'>
+            <div id='dp-playlist-soundcloudTracks'></div>
+        </div>
+        <div id='tabs-3'>
+            <div id='dp-playlist-bandcampTracks'></div>
+        </div>
+        <div id='tabs-4'>
+            <div id='dp-band-info' class='tabs'>
+                <ul>
+                    <li><a href='#info-tabs-1' class='dp-tab'>Bios</a><li>
+                    <li><a href='#info-tabs-2' class='dp-tab'>Similar</a><li>
+                    <li><a href='#info-tabs-3' class='dp-tab'>Events</a><li>
+                    <li><a href='#info-tabs-4' class='dp-tab'>Links</a><li>
+                </ul>
+               
+                <div id='info-tabs-1'>
+                    <div id='dp-bios-container'></div>
+                </div> 
+                <div id='info-tabs-2'>
+                    <div id='dp-similar-container'></div>
+                </div> 
+                <div id='info-tabs-3'>
+                    <div id='dp-events-container'></div>
+                </div> 
+                <div id='info-tabs-4'>
+                    <div id='dp-links-container'></div>
+                </div> 
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    var bandName = (RegExp('band_name=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
+
+    // youtube query
+    document.write("<script src='http://gdata.youtube.com/feeds/api/videos?q=" + bandName +"&alt=json-in-script&callback=deliPlayer.addYoutubeVideos&max-results=50&format=5'><\/script>");
+
+    
+    deliPlayer.init(function() {
+
+        // load track list first for filtering
+        // anything that relies on track list should go 
+        // in the callback
+        deliPlayer.loadTrackList(bandName, function() {
+            
+            deliPlayer.filterYoutubeVideos(bandName, function(videos) {
+                displayVideos(videos);
+            });
+
+            deliPlayer.loadSoundcloudTracks(bandName, function(tracks) {
+                //console.log(deliPlayer.soundcloudTracks);
+                displaySongs('soundcloudTracks');
+            });
+
+        });
+
+        // echonest links
+        deliPlayer.loadEchonestLinks(bandName, function(links) {
+            //console.log(links);
+            displayLinks(links);
+        });
+
+        // last.fm events
+        deliPlayer.loadLastFMEvents(bandName, function(events) {
+            //console.log(events); 
+            displayEvents(events);
+        });
+
+        // echonest bios
+        deliPlayer.loadEchonestBios(bandName, function(bios) {
+            displayBios(bios);
+        });
+
+        // echonest similar 
+        deliPlayer.loadEchonestSimilar(bandName, function(similar) {
+            displaySimilar(similar);
+        });
+        
+        // bandcamp can be loaded without song lists
+        deliPlayer.loadBandcampTracks(bandName, function(tracks) {
+            //console.log(deliPlayer.soundcloudTracks);
+            displaySongs('bandcampTracks');
+        });
+    });
+
+    function displayEvents(events) {
+        output = "<div>";
+        output += "<h4>Events</h4>";
+        output += "<ul>";
+        for (var e in events) {
+            var event = events[e];
+            output += "<li class='dp-event'>" + event.startDate + ", " + event.venue.name + "</li>";
+        }
+        output += "</ul>";
+        output += "</div>";
+
+        $('#dp-events-container').html(output);
+    };
+
+    function displayLinks(links) {
+        output = "<div>";
+        output += "<h4>Links</h4>";
+        output += "<ul>";
+        for (var l in links) {
+            var link = links[l];
+            output += "<li class='dp-link'><a href='" + link + "'>" + link + "</a></li>";
+        }
+        output += "</ul>";
+        output += "</div>";
+
+        $('#dp-links-container').html(output);
+    };
+
+    function displaySimilar(list) {
+        output = "<div>";
+        output += "<h4>Similar Artists</h4>";
+        output += "<ul>";
+        for (var a in list) {
+            var artist = list[a];
+            output += "<li class='dp-similar'>";
+            output += "<p><a href='/media_player.html?band_name=" + artist.name + "'>" + artist.name + "</a></p>";
+            output += "</li>";
+        } 
+        output += "</ul>";
+        output += "</div>";
+
+        $('#dp-similar-container').html(output);
+    };
+   
+    function displayBios(list) {
+        output = "<div>";
+        output += "<h4>Bios</h4>";
+        output += "<ul>";
+        for (var b in list) {
+            var bio = list[b];
+            output += "<li class='dp-bio'>";
+            output += "<p><a href='" + bio.url + "' target='_blank'>" + bio.text.substring(0, 150) + "</a></p>";
+            output += "<p>Source: " + bio.site + "</p>";
+            output += "</li>";
+        } 
+        output += "</ul>";
+        output += "</div>";
+
+        $('#dp-bios-container').html(output);
+    };
+ 
+    function displaySongs(list) {
+        output = "<ol class='jcarousel jcarousel-skin-tango'>";
+        for (var t in deliPlayer[list]) {
+            var track = deliPlayer[list][t];
+            output += "<li class='audio-link'><a href='#' data-src='" + track.mp3 + "' ";
+            output += "data-title='" + track.title + "' ";
+            output += "data-artist='" + track.artist + "' ";
+            output += "data-img='" + track.poster + "'>";
+            output += "<img src='" + track.poster + "' width='55px' height='55px' style='float: left;'>";
+            output += "<span>";
+            output += "<ul class='audio-desc'>";
+            output += "<li>artist: " + track.artist + "</li>";
+            output += "<li>album: " + track.albumName + "</li>";
+            output += "<li>title: " + track.title + "</li>";
+            //output += "<li>desc: " + track.trackAbout + "</li>";
+            output += "</ul>";
+            output += "</span>";
+            output += "</div></a></li>";
+        }        
+        output += "<ol>";
+
+        $('#dp-playlist-'+list).html(output);
+        $('.jcarousel').jcarousel({
+            vertical: true,
+            scroll: 2
+        });
+    };
+
+    function displayVideos(list) {
+        var output = '<ul class="videos jcarousel jcarousel-skin-tango">';
+        for (var v in list) {
+            var video = list[v];
+             
+            output += '<li onclick="loadVideo(\'' + video.playerUrl + '\', true)">';
+            output += "<img src='" + video.thumbnailUrl + "' class='video-thumbnail' />";
+            output += "<span class='video-title'>'" + video.title + "...</span>";
+            output += "</li>";
+        }
+        output += "</ul><br style='clear: left;'/>";
+
+        if (deliPlayer.youtubeFilteredVideos.length > 0) {
+            loadVideo(deliPlayer.youtubeFilteredVideos[0].playerUrl, false);
+            $('#videos2').html(output);
+            $('.videos').jcarousel({
+                vertical: true,
+                scroll: 2
+            });
+        }
+    }
+
+    function loadVideo(playerUrl, autoplay) {
+        swfobject.embedSWF(
+            playerUrl + '&rel=1&border=0&fs=1&autoplay=' + 
+            (autoplay?1:0), 'player', '300', '300', '9.0.0', false, 
+            false, {allowfullscreen: 'true'});
+    }
+</script>
+
+</html>

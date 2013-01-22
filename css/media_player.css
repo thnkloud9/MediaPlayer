@@ -1,0 +1,64 @@
+#audio-image-container {
+}
+
+#media-tab {
+    width: 300px;
+}
+
+#audio-container {
+    width: 300px;
+    display: none;
+}
+
+.audio-link {
+    font-size: 10px;
+}
+
+.audio-desc {
+    padding-left: 65px;
+}
+
+.dp-tab {
+    font-size: 8px;
+}
+
+.video-title {
+  font-size: 10px;
+}
+ul.videos li {
+  width: 10em;
+  margin-bottom: 1em;
+}
+ul.videos
+{
+  margin-bottom: 1em;
+  padding-left : 0em;
+  margin-left: 0em;
+  list-style: none;
+}
+
+div.player-container {
+    height: 300px;
+    width: 300px; 
+}
+
+.video-thumbnail {
+    width: 55px;
+    height: 55px;
+    float: left;
+    padding-right: 9px;
+}
+
+.dp-event {
+    font-size: 10px;
+}
+.dp-link {
+    font-size: 10px;
+}
+.dp-similar {
+    font-size: 10px;
+}
+.dp-bio {
+    font-size: 10px;
+}
+

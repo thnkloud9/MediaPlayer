@@ -253,7 +253,7 @@ $(function() {
             output += "<ul class='audio-desc'>";
             output += "<li>artist: " + track.artist + "</li>";
             output += "<li class='popularity'><span style='width: " + (track.popularity * 100) + "%;'></span>popularity: " + track.popularity + "</li>";
-            output += "<li>title: " + track.title + "(" + track.popularity + ")</li>";
+            output += "<li>title: " + track.title + "</li>";
             //output += "<li>desc: " + track.trackAbout + "</li>";
             output += "</ul>";
             output += "</span>";
@@ -279,7 +279,7 @@ $(function() {
              
             output += '<li onclick="loadVideo(\'' + video.playerUrl + '\', true)">';
             output += "<img src='" + video.thumbnailUrl + "' class='video-thumbnail' />";
-            output += "<span class='video-title'>'" + video.title + "... (" + video.popularity + ")</span>";
+            output += "<span class='video-title'>'" + video.title + "...</span>";
             output += "<span class='popularity'><span style='width: " + (video.popularity * 100) + "%;'></span>" + video.popularity + "</span>";
             output += "</li>";
         }

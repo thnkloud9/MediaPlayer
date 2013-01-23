@@ -16,7 +16,8 @@
 
 .audio-desc {
     padding-left: 65px;
-    height: 60px;
+    /*height: 60px;*/
+    margin-bottom: 15px;
 }
 
 .dp-tab {
@@ -36,6 +37,19 @@ ul.videos
   margin-left: 0em;
   list-style: none;
 }
+
+ul.audio {
+  margin-bottom: 1em;
+  padding-left: 0;
+  margin-left: 0;
+  list-style: none;
+  }
+  ul.audio > li {
+    clear: left;
+    }
+  ul.audio ul {
+    list-style: none;
+    }
 
 div.player-container {
     height: 300px;

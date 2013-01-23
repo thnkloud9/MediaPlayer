@@ -70,52 +70,56 @@ $(function() {
 </head>
 </head>
 <body>
-    <div id="video-container">
-        <object id="player"></object>
-    </div>
-
-    <div id='audio-container'>
-        <div id='audio-image-container'><div style='width: 300px; height: 268px;'></div></div>
-        <audio></audio>
-        <div class='track-details'></div>
-    </div>
-
-    <div id='media-tab' class='tabs'>
-        <ul>
-            <li><a href='#tabs-1' class='dp-tab show-video'>Youtube</a></li>
-            <li><a href='#tabs-2' class='dp-tab show-audio'>Audio</a></li>
-            <li><a href='#tabs-3' class='dp-tab show-info'>Info</a></li>
-        </ul>
-        <div id='tabs-1'>
-            <div id="videos2"></div>
-        </div> 
-        <div id='tabs-2'>
-            <div id='dp-playlist-audio-container'>
-                <ul id='dp-playlist-audio' class='audio'>
-                </ul>
-            </div>
+    <div id="container">
+        <div id="video-container">
+            <object id="player"></object>
         </div>
-        <div id='tabs-3'>
-            <div id='dp-band-info' class='tabs'>
+
+        <div id='audio-container'>
+            <div id='audio-image-container'><div style='width: 300px; height: 268px;'></div></div>
+            <audio></audio>
+            <div class='track-details'></div>
+        </div>
+
+        <div id='media-tab' class='tabs'>
+            <nav>
                 <ul>
-                    <li><a href='#info-tabs-1' class='dp-tab'>Bios</a><li>
-                    <li><a href='#info-tabs-2' class='dp-tab'>Similar</a><li>
-                    <li><a href='#info-tabs-3' class='dp-tab'>Events</a><li>
-                    <li><a href='#info-tabs-4' class='dp-tab'>Links</a><li>
+                    <li><a href='#tabs-1' class='dp-tab show-video'>Youtube</a></li>
+                    <li><a href='#tabs-2' class='dp-tab show-audio'>Audio</a></li>
+                    <li><a href='#tabs-3' class='dp-tab show-info'>Info</a></li>
                 </ul>
-               
-                <div id='info-tabs-1'>
-                    <div id='dp-bios-container'></div>
-                </div> 
-                <div id='info-tabs-2'>
-                    <div id='dp-similar-container'></div>
-                </div> 
-                <div id='info-tabs-3'>
-                    <div id='dp-events-container'></div>
-                </div> 
-                <div id='info-tabs-4'>
-                    <div id='dp-links-container'></div>
-                </div> 
+            </nav>
+            <div id='tabs-1'>
+                <div id="videos2"></div>
+            </div> 
+            <div id='tabs-2'>
+                <div id='dp-playlist-audio-container'>
+                    <ol id='dp-playlist-audio' class='audio'>
+                    </ol>
+                </div>
+            </div>
+            <div id='tabs-3'>
+                <div id='dp-band-info' class='tabs'>
+                    <ul>
+                        <li><a href='#info-tabs-1' class='dp-tab'>Bios</a><li>
+                        <li><a href='#info-tabs-2' class='dp-tab'>Similar</a><li>
+                        <li><a href='#info-tabs-3' class='dp-tab'>Events</a><li>
+                        <li><a href='#info-tabs-4' class='dp-tab'>Links</a><li>
+                    </ul>
+                   
+                    <div id='info-tabs-1'>
+                        <div id='dp-bios-container'></div>
+                    </div> 
+                    <div id='info-tabs-2'>
+                        <div id='dp-similar-container'></div>
+                    </div> 
+                    <div id='info-tabs-3'>
+                        <div id='dp-events-container'></div>
+                    </div> 
+                    <div id='info-tabs-4'>
+                        <div id='dp-links-container'></div>
+                    </div> 
+                </div>
             </div>
         </div>
     </div>
@@ -272,7 +276,7 @@ $(function() {
 
     function displayVideos(list) {
         var orderedVideos = _.sortBy(list, 'popularity');
-        var output = '<ul class="videos">';
+        var output = '<ol class="videos">';
 
         for (var v = orderedVideos.length - 1; v >= 0; v--) {
             var video = orderedVideos[v];
@@ -283,7 +287,7 @@ $(function() {
             output += "<span class='popularity'><span style='width: " + (video.popularity * 100) + "%;'></span>" + video.popularity + "</span>";
             output += "</li>";
         }
-        output += "</ul><br style='clear: left;'/>";
+        output += "</ol>";
 
         if (deliPlayer.youtubeFilteredVideos.length > 0) {
             loadVideo(deliPlayer.youtubeFilteredVideos[0].playerUrl, false);

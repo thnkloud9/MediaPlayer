@@ -13,22 +13,27 @@ var deliPlayer = {
     bandcampBands: [],
     bandcampAlbums: [],
     bandcampTracks: [],
+    bandcampImages: [],
     
     /* soundcloud vars */
     soundcloudClientId: 'OtYaDuMCqKGZn5IiRU2EKg',
     soundcloudTracks: [],
+    soundcloudImages: [],
 
     /* last.fm vars */
     lastFMDomain: 'http://ws.audioscrobbler.com/2.0',
     lastFMApiKey: 'e4d4f5353a13cf36fdb79957f831b6cf',
     lastFMApiSecret: '33de9ec1331e068d9e50e3c80f173c96',
     lastFMTopTracks: [],
+    lastFMImages: [],
 
     /* echonest vars */
     echonestDomain: 'http://developer.echonest.com/api/v4',
     echonestApiKey: '5SMVVCCJLQPN1IIOZ',
     echonestConsumerKey: '8be1a338d938f19a8c9cde281d705095',
     echonestSecret: '58/+heZ1R3iRlFSGESrwcA',
+    echonestImages: [],
+    echonestTrackPreviews: [],
 
     /* properties */
     filterByTopSongs: false,
@@ -131,6 +136,7 @@ var deliPlayer = {
         var params = [];
         params['artist'] = bandName;
         params['results'] = 100;
+        params['bucket'] = 'song_hotttnesss&bucket=tracks&bucket=id:7digital-US';
         params['callback'] = 'deliPlayer.addEchonestTracks';
         deliPlayer._sendEchonest('song/search', params, function(results) {
             eval(results);
@@ -143,9 +149,22 @@ var deliPlayer = {
 
         for (var s in results.response.songs) {
             var song = results.response.songs[s];
-            deliPlayer.topTrackTitles[song.title.toLowerCase()] = 1;
+            deliPlayer.topTrackTitles[song.title.toLowerCase()] = song.song_hotttnesss;
             deliPlayer.allTrackTitles.push(song.title.toLowerCase());
+            deliPlayer.echonestImages.push(song.release_image);
+
+            for (var t in song.tracks) {
+                var track = song.tracks[t];
+                var previewTrack = {
+                                'artist': song.artist_name,
+                                'poster': track.release_image,
+                                'title': song.title,
+                                'mp3': track.preview_url,
+                };
+                deliPlayer.echonestTrackPreviews.push(previewTrack);
+            }
         }
+        console.log(deliPlayer.echonestTrackPreviews);
     },
 
     loadEchonestBios: function(bandName, callback) {
@@ -250,12 +269,20 @@ var deliPlayer = {
     addLastFMTracks: function(results) {
 
         deliPlayer.log('loading last.fm top tracks');
+
+        // convert listens to popularity percentage
+        var total_plays = 0;
+        for (var t in results.toptracks.track) {
+            total_plays += parseInt(results.toptracks.track[t].playcount, 10);
+        }
+        console.log(total_plays);
         for (var t in results.toptracks.track) {
             var track = results.toptracks.track[t];
 
             deliPlayer.lastFMTopTracks.push(track);
-            deliPlayer.topTrackTitles[track.name.toLowerCase()] = track.playcount;
+            deliPlayer.topTrackTitles[track.name.toLowerCase()] = parseFloat((parseInt(track.playcount, 10) / parseInt(total_plays, 10)));
             deliPlayer.allTrackTitles.push(track.name.toLowerCase());
+            deliPlayer.lastFMImages.push(track.image[2]['#text']);
         }
     },
 
@@ -315,6 +342,7 @@ var deliPlayer = {
                             'trackDuration': track.duration
                         };
                         deliPlayer.soundcloudTracks.push(playlistTrack);
+                        deliPlayer.soundcloudImages.push(track.artwork_url);
                     } 
                 }
             }

@@ -97,3 +97,11 @@ div.player-container {
     width: 0;
     opacity: 0.7;
     }
+
+/* audio player overrides */
+.audiojs {
+  }
+ .audiojs .scrubber {
+  float: right;
+  width: 265px;
+  }

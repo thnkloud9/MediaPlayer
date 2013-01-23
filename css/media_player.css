@@ -64,7 +64,7 @@ div.player-container {
 
 /* popularity */
 .popularity {
-  background: red;
+  background: #30173a;
   position: relative;
   height: 20px;
   overflow: hidden;
@@ -74,10 +74,11 @@ div.player-container {
   margin: 5px;
   }
   .popularity span {
-    background: blue;
+    background: white;
     position: absolute;
     left: 0;
     top: 0;
     height: 100%;
     width: 0;
+    opacity: 0.7;
     }

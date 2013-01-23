@@ -270,13 +270,16 @@ $(function() {
     };
 
     function displayVideos(list) {
+        var orderedVideos = _.sortBy(list, 'popularity');
         var output = '<ul class="videos">';
-        for (var v in list) {
-            var video = list[v];
+
+        for (var v = orderedVideos.length - 1; v >= 0; v--) {
+            var video = orderedVideos[v];
              
             output += '<li onclick="loadVideo(\'' + video.playerUrl + '\', true)">';
             output += "<img src='" + video.thumbnailUrl + "' class='video-thumbnail' />";
             output += "<span class='video-title'>'" + video.title + "... (" + video.popularity + ")</span>";
+            output += "<br><span class='popularity'><span style='width: " + (video.popularity * 100) + "%;'></span>" + video.popularity + "</span>";
             output += "</li>";
         }
         output += "</ul><br style='clear: left;'/>";

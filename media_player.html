@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="css/media_player.css" />
 
 <script type="text/javascript" src="http://swfobject.googlecode.com/svn/trunk/swfobject/swfobject.js"></script>
-<script src="http://connect.soundcloud.com/sdk.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<script type="text/javascript" src="http://connect.soundcloud.com/sdk.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 
 <script type="text/javascript" src="js/jquery.jcarousel.min.js"></script>
 <script type="text/javascript" src="js/audiojs/audio.min.js"></script>
@@ -82,20 +82,19 @@ $(function() {
     <div id='media-tab' class='tabs'>
         <ul>
             <li><a href='#tabs-1' class='dp-tab show-video'>Youtube</a></li>
-            <li><a href='#tabs-2' class='dp-tab show-audio'>Soundcloud</a></li>
-            <li><a href='#tabs-3' class='dp-tab show-audio'>Bandcamp</a></li>
-            <li><a href='#tabs-4' class='dp-tab show-info'>Info</a></li>
+            <li><a href='#tabs-2' class='dp-tab show-audio'>Audio</a></li>
+            <li><a href='#tabs-3' class='dp-tab show-info'>Info</a></li>
         </ul>
         <div id='tabs-1'>
             <div id="videos2"></div>
         </div> 
         <div id='tabs-2'>
-            <div id='dp-playlist-soundcloudTracks'></div>
+            <div id='dp-playlist-audio-container'>
+                <ul id='dp-playlist-audio' class=''>
+                </ul>
+            </div>
         </div>
         <div id='tabs-3'>
-            <div id='dp-playlist-bandcampTracks'></div>
-        </div>
-        <div id='tabs-4'>
             <div id='dp-band-info' class='tabs'>
                 <ul>
                     <li><a href='#info-tabs-1' class='dp-tab'>Bios</a><li>
@@ -134,15 +133,17 @@ $(function() {
         // anything that relies on track list should go 
         // in the callback
         deliPlayer.loadTrackList(bandName, function() {
-            
+
             deliPlayer.filterYoutubeVideos(bandName, function(videos) {
                 displayVideos(videos);
             });
 
             deliPlayer.loadSoundcloudTracks(bandName, function(tracks) {
                 //console.log(deliPlayer.soundcloudTracks);
-                displaySongs('soundcloudTracks');
+                displaySongs('SoundcloudTracks', tracks);
             });
+
+            displaySongs('Previews', deliPlayer.echonestTrackPreviews);
 
         });
 
@@ -170,8 +171,7 @@ $(function() {
         
         // bandcamp can be loaded without song lists
         deliPlayer.loadBandcampTracks(bandName, function(tracks) {
-            //console.log(deliPlayer.soundcloudTracks);
-            displaySongs('bandcampTracks');
+            displaySongs('BandcampTracks', tracks);
         });
     });
 
@@ -236,10 +236,13 @@ $(function() {
         $('#dp-bios-container').html(output);
     };
  
-    function displaySongs(list) {
-        output = "<ol class='jcarousel jcarousel-skin-tango'>";
-        for (var t in deliPlayer[list]) {
-            var track = deliPlayer[list][t];
+    function displaySongs(list, tracks) {
+
+        var orderedTracks = _.sortBy(tracks, function(track){ return Math.max(track.popularity); });
+
+        output = "<li><h4>" + list + "</h4></li>";
+        for (var t in orderedTracks) {
+            var track = orderedTracks[t];
             output += "<li class='audio-link'><a href='#' data-src='" + track.mp3 + "' ";
             output += "data-title='" + track.title + "' ";
             output += "data-artist='" + track.artist + "' ";
@@ -248,41 +251,46 @@ $(function() {
             output += "<span>";
             output += "<ul class='audio-desc'>";
             output += "<li>artist: " + track.artist + "</li>";
-            output += "<li>album: " + track.albumName + "</li>";
+            output += "<li>popularity: " + track.popularity + "</li>";
             output += "<li>title: " + track.title + "</li>";
             //output += "<li>desc: " + track.trackAbout + "</li>";
             output += "</ul>";
             output += "</span>";
             output += "</div></a></li>";
         }        
-        output += "<ol>";
 
-        $('#dp-playlist-'+list).html(output);
+        $('#dp-playlist-audio').prepend(output);
+
+        /*
         $('.jcarousel').jcarousel({
             vertical: true,
             scroll: 2
         });
+        */ 
     };
 
     function displayVideos(list) {
-        var output = '<ul class="videos jcarousel jcarousel-skin-tango">';
+        var output = '<ul class="videos">';
         for (var v in list) {
             var video = list[v];
              
             output += '<li onclick="loadVideo(\'' + video.playerUrl + '\', true)">';
             output += "<img src='" + video.thumbnailUrl + "' class='video-thumbnail' />";
-            output += "<span class='video-title'>'" + video.title + "...</span>";
+            output += "<span class='video-title'>'" + video.title + "... (" + video.popularity + ")</span>";
             output += "</li>";
         }
         output += "</ul><br style='clear: left;'/>";
 
         if (deliPlayer.youtubeFilteredVideos.length > 0) {
             loadVideo(deliPlayer.youtubeFilteredVideos[0].playerUrl, false);
+            
             $('#videos2').html(output);
+            /*
             $('.videos').jcarousel({
                 vertical: true,
                 scroll: 2
             });
+            */
         }
     }
 

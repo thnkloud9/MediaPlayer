@@ -108,8 +108,10 @@ var deliPlayer = {
     filterYoutubeVideos: function(bandName, callback) {
         for (var v in deliPlayer.youtubeVideos) {
             var video = deliPlayer.youtubeVideos[v];
+            var popularity = deliPlayer.isTopTrack(bandName, video.title);
 
-            if (deliPlayer.isTopTrack(bandName, video.title)) {
+            if (popularity) {
+                video.popularity = popularity; 
                 deliPlayer.youtubeFilteredVideos.push(video);
             }
 
@@ -139,7 +141,7 @@ var deliPlayer = {
         params['bucket'] = 'song_hotttnesss&bucket=tracks&bucket=id:7digital-US';
         params['callback'] = 'deliPlayer.addEchonestTracks';
         deliPlayer._sendEchonest('song/search', params, function(results) {
-            eval(results);
+            //eval(results);
             callback();
         });
     },
@@ -160,11 +162,11 @@ var deliPlayer = {
                                 'poster': track.release_image,
                                 'title': song.title,
                                 'mp3': track.preview_url,
+                                'popularity': song.song_hotttnesss
                 };
                 deliPlayer.echonestTrackPreviews.push(previewTrack);
             }
         }
-        console.log(deliPlayer.echonestTrackPreviews);
     },
 
     loadEchonestBios: function(bandName, callback) {
@@ -173,7 +175,7 @@ var deliPlayer = {
         params['results'] = 100;
         params['callback'] = 'deliPlayer.addEchonestBios';
         deliPlayer._sendEchonest('artist/biographies', params, function(results) {
-            eval(results);
+            //eval(results);
             callback(deliPlayer.allBios);
 
         });
@@ -193,7 +195,7 @@ var deliPlayer = {
         params['results'] = 20;
         params['callback'] = 'deliPlayer.addEchonestSimilar';
         deliPlayer._sendEchonest('artist/similar', params, function(results) {
-            eval(results);
+            //eval(results);
             callback(deliPlayer.allSimilar);
         });
     },
@@ -211,7 +213,7 @@ var deliPlayer = {
         params['name'] = bandName;
         params['callback'] = 'deliPlayer.addEchonestLinks';
         deliPlayer._sendEchonest('artist/urls', params, function(results) {
-            eval(results);
+            //eval(results);
             callback(deliPlayer.allLinks);
         });
     },
@@ -239,7 +241,7 @@ var deliPlayer = {
         params['callback'] = 'deliPlayer.addLastFMEvents';
 
         deliPlayer._sendLastFM('artist.getEvents', params, function(results) {
-            eval(results);
+            //eval(results);
             callback(deliPlayer.allEvents);
  
         });
@@ -261,7 +263,7 @@ var deliPlayer = {
         params['callback'] = 'deliPlayer.addLastFMTracks';
 
         deliPlayer._sendLastFM('artist.getTopTracks', params, function(results) {
-            eval(results);
+            //eval(results);
             callback();
         });
     },
@@ -275,7 +277,7 @@ var deliPlayer = {
         for (var t in results.toptracks.track) {
             total_plays += parseInt(results.toptracks.track[t].playcount, 10);
         }
-        console.log(total_plays);
+
         for (var t in results.toptracks.track) {
             var track = results.toptracks.track[t];
 
@@ -298,7 +300,7 @@ var deliPlayer = {
         if (($.isEmptyObject(deliPlayer.topTrackTitles)) ||
             (deliPlayer.topTrackTitles[modifiedTitle]) ||
             (deliPlayer.topTrackTitles[trackTitle.toLowerCase()])) {
-            return true;
+            return Math.max(deliPlayer.topTrackTitles[modifiedTitle], deliPlayer.topTrackTitles[trackTitle.toLowerCase()]);
         }
 
         // closer look match
@@ -306,11 +308,12 @@ var deliPlayer = {
             var patternTitle = title.replace(/\(/g, '\\(').
                 replace(/\)/g, '\\)').
                 replace(/\[/g, '\\[').
+                replace(/\*/g, '\\*').
                 replace(/\]/g, '\\]');
             var pattern = new RegExp('^.*' + patternTitle + '.*$', 'i');
             if(trackTitle.match(pattern)) {
                 deliPlayer.log('added: '+trackTitle+' match on: '+title);
-                return true;
+                return deliPlayer.topTrackTitles[title];
             }
         }
 
@@ -329,17 +332,16 @@ var deliPlayer = {
             for (var t in tracks) {
                 var track = tracks[t];
                 if (track.sharing == 'public') {
+                    var popularity = deliPlayer.isTopTrack(bandName, track.title);
                     // filter by top track titles
-                    if (deliPlayer.isTopTrack(bandName, track.title)) { 
+                    if (popularity) { 
                         var playlistTrack = {
                             'artist': track.user.username,
                             'albumName': '',
                             'poster': track.artwork_url,
-                            'albumAbout': track.description,
                             'title': track.title,
-                            'trackAbout': track.description,
                             'mp3': track.stream_url + '?client_id='+deliPlayer.soundcloudClientId,
-                            'trackDuration': track.duration
+                            'popularity': popularity
                         };
                         deliPlayer.soundcloudTracks.push(playlistTrack);
                         deliPlayer.soundcloudImages.push(track.artwork_url);
@@ -416,15 +418,14 @@ var deliPlayer = {
         deliPlayer.log('loading bandcamp tracks...');
         for (var t in results.tracks) {
             var track = results.tracks[t];
+            var popularity = deliPlayer.isTopTrack('', track.title);
             var playlistTrack = {
                 'artist': '',
                 'albumName': results.title,
                 'poster': results.large_art_url,
-                'albumAbout': results.about,
                 'title': track.title,
-                'trackAbout': track.about,
                 'mp3': track.streaming_url,
-                'trackDuration': track.duration
+                'popularity': popularity
             };
             deliPlayer.bandcampTracks.push(playlistTrack);
         }

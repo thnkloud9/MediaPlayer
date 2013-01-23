@@ -62,3 +62,20 @@ div.player-container {
     font-size: 10px;
 }
 
+/* popularity */
+.popularity {
+  background: red;
+  position: relative;
+  height: 20px;
+  width: 100px;
+  overflow: hidden;
+  text-indent: -10000em;
+  }
+  .popularity span {
+    background: blue;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    }

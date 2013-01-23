@@ -238,10 +238,10 @@ $(function() {
  
     function displaySongs(list, tracks) {
 
-        var orderedTracks = _.sortBy(tracks, function(track){ return Math.max(track.popularity); });
+        var orderedTracks = _.sortBy(tracks, 'popularity');
 
         output = "<li><h4>" + list + "</h4></li>";
-        for (var t in orderedTracks) {
+        for (var t = orderedTracks.length - 1; t >= 0; t--) {
             var track = orderedTracks[t];
             output += "<li class='audio-link'><a href='#' data-src='" + track.mp3 + "' ";
             output += "data-title='" + track.title + "' ";
@@ -251,8 +251,8 @@ $(function() {
             output += "<span>";
             output += "<ul class='audio-desc'>";
             output += "<li>artist: " + track.artist + "</li>";
-            output += "<li class='popularity'><span style='width: " + track.popularity + "%;'></span>popularity: " + track.popularity + "</li>";
-            output += "<li>title: " + track.title + "</li>";
+            output += "<li class='popularity'><span style='width: " + (track.popularity * 100) + "%;'></span>popularity: " + track.popularity + "</li>";
+            output += "<li>title: " + track.title + "(" + track.popularity + ")</li>";
             //output += "<li>desc: " + track.trackAbout + "</li>";
             output += "</ul>";
             output += "</span>";

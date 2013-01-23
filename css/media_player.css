@@ -69,6 +69,9 @@ div.player-container {
   height: 20px;
   overflow: hidden;
   text-indent: -10000em;
+  width: 70px;
+  height: 10px;
+  margin: 5px;
   }
   .popularity span {
     background: blue;

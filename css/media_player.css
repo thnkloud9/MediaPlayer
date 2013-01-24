@@ -178,8 +178,13 @@ div.player-container {
 /* audio player overrides */
 .audiojs {
   }
- .audiojs .scrubber {
-  float: right;
-  width: 265px;
-  cursor: pointer;
-  }
+  .audiojs .scrubber {
+    float: right;
+    width: 265px;
+    cursor: pointer;
+    }
+  .track-details {
+    height: auto;
+    width: auto;
+    min-height: 12px;
+    }

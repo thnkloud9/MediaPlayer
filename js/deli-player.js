@@ -382,18 +382,27 @@ var deliPlayer = {
                 //eval(album_results);
                 deliPlayer.addBandcampAlbumIds(album_results);
 
-                var albumInfoEndpoint = "album/2/info";
-                var albumInfoParams = [];
-                var albumIdsString = deliPlayer.bandcampAlbums.join(',');
-                albumInfoParams['album_id'] = albumIdsString;
-                albumInfoParams['callback'] = 'deliPlayer.addBandcampTracks';
+                var total_albums = album_results.discography.length;
+                var processed = 0;
 
-                /* get album info (track ids) */
-                deliPlayer._sendBandcamp(albumInfoEndpoint, albumInfoParams, function(track_results) {
-                    //eval(track_results);
-                    deliPlayer.addBandcampTracks(track_results);
-                    callback(deliPlayer.bandcampTracks);
-                }); 
+                for (var a in album_results.discography) {
+                    var albumInfoEndpoint = "album/2/info";
+                    var albumInfoParams = [];
+                    albumInfoParams['album_id'] = album_results.discography[a].album_id;
+                    albumInfoParams['callback'] = 'deliPlayer.addBandcampTracks';
+                
+                    /* get album info (track ids) */
+                    (function(total_albums) {
+                        deliPlayer._sendBandcamp(albumInfoEndpoint, albumInfoParams, function(track_results) {
+                            //eval(track_results);
+                            deliPlayer.addBandcampTracks(track_results);
+                            processed++;
+                            if (processed == total_albums) {
+                                callback(deliPlayer.bandcampTracks);
+                            }
+                        }); 
+                    })(total_albums);
+                }
             });
         });
     },

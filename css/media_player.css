@@ -34,7 +34,7 @@ nav.main {
       }
       nav.main ul li a {
         position: relative;
-        top: 2px;
+        top: 3px;
         color: #fff;
         text-decoration: none;
         background: #333;
@@ -43,11 +43,17 @@ nav.main {
         box-shadow: 0 1px 10px #000;
         text-shadow: 1px 1px #000;
         }
-      nav.main ul li a.active {
-        background: #666;
-        top: 0;
-        z-index: 100;
-        }
+        nav.main ul li a:hover {
+          top: 2px;
+          }
+        nav.main ul li a.active {
+          background: #666;
+          top: 1px;
+          z-index: 100;
+          }
+          nav.main ul li a.active:hover {
+            top: 0;
+            }
 
 /* set default tab display states */
 .tabs {

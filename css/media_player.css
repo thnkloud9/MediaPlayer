@@ -1,9 +1,73 @@
+/* generic styles */
+* {
+  font-family: sans-serif;
+  }
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  }
+
+.container {
+  width: 300px;
+  background: #999;
+  padding: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #000;
+  }
+
+/*navigation */
+nav.main {
+  padding-top: 15px;
+  height: 26px;
+  overflow: hidden;
+  }
+  nav.main ul {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    }
+    nav.main ul li {
+      display: inline;
+      }
+      nav.main ul li a {
+        position: relative;
+        top: 2px;
+        color: #fff;
+        text-decoration: none;
+        background: #333;
+        border-radius: 3px 3px 0 0;
+        padding: 10px 20px;
+        box-shadow: 0 1px 10px #000;
+        text-shadow: 1px 1px #000;
+        }
+      nav.main ul li a.active {
+        background: #666;
+        top: 0;
+        z-index: 100;
+        }
+
+/* set default tab display states */
+.tabs {
+  }
+  .tabs > div {
+    display: none;
+    padding: 15px;
+    }
+    .tabs > div:nth-of-type(1) {
+      display: block;
+      }
+
+/* legacy styles */
 #audio-image-container {
 }
 
 #media-tab {
-    width: 300px;
-}
+  width: 300px;
+  }
+
 
 #audio-container {
     width: 300px;
@@ -21,33 +85,37 @@
 }
 
 .dp-tab {
-    font-size: 8px;
+    /*font-size: 8px;*/
 }
 
 .video-title {
   font-size: 10px;
-}
-ul.videos li {
-    height: 60px;
-}
-ul.videos
-{
+  }
+
+/* video list */
+ol.videos {
   margin-bottom: 1em;
   padding-left : 0em;
   margin-left: 0em;
-  list-style: none;
-}
-
-ul.audio {
-  margin-bottom: 1em;
-  padding-left: 0;
-  margin-left: 0;
-  list-style: none;
   }
-  ul.audio > li {
+  ol.videos li {
     clear: left;
+    margin: 0 0 10px;
+    overflow: hidden;
+    cursor: pointer;
     }
-  ul.audio ul {
+
+/* audio list */
+ol.audio {
+  padding: 0;
+  margin: 0 0 1em;
+  }
+  ol.audio > li {
+    clear: left;
+    margin: 0 0 10px;
+    overflow: hidden;
+    }
+  ol.audio ul {
     list-style: none;
     }
 

@@ -65,9 +65,8 @@ $(function() {
 </script>
 
 </head>
-</head>
 <body>
-    <div id="container">
+    <div class="container">
         <div id="video-container">
             <object id="player"></object>
         </div>
@@ -79,11 +78,11 @@ $(function() {
         </div>
 
         <div id='media-tab' class='tabs'>
-            <nav>
+            <nav class="main">
                 <ul>
-                    <li><a href='#tabs-1' class='dp-tab show-video'>Youtube</a></li>
-                    <li><a href='#tabs-2' class='dp-tab show-audio'>Audio</a></li>
-                    <li><a href='#tabs-3' class='dp-tab show-info'>Info</a></li>
+                    <li><a href='#tabs-1' rel="tabs-1" class='dp-tab show-video active'>Youtube</a></li>
+                    <li><a href='#tabs-2' rel="tabs-2" class='dp-tab show-audio'>Audio</a></li>
+                    <li><a href='#tabs-3' rel="tabs-3" class='dp-tab show-info'>Info</a></li>
                 </ul>
             </nav>
             <div id='tabs-1'>
@@ -97,13 +96,14 @@ $(function() {
             </div>
             <div id='tabs-3'>
                 <div id='dp-band-info' class='tabs'>
-                    <ul>
-                        <li><a href='#info-tabs-1' class='dp-tab'>Bios</a><li>
-                        <li><a href='#info-tabs-2' class='dp-tab'>Similar</a><li>
-                        <li><a href='#info-tabs-3' class='dp-tab'>Events</a><li>
-                        <li><a href='#info-tabs-4' class='dp-tab'>Links</a><li>
-                    </ul>
-                   
+                    <nav>
+                        <ul>
+                            <li><a href='#info-tabs-1' class='dp-tab'>Bios</a><li>
+                            <li><a href='#info-tabs-2' class='dp-tab'>Similar</a><li>
+                            <li><a href='#info-tabs-3' class='dp-tab'>Events</a><li>
+                            <li><a href='#info-tabs-4' class='dp-tab'>Links</a><li>
+                        </ul>
+                    </nav>
                     <div id='info-tabs-1'>
                         <div id='dp-bios-container'></div>
                     </div> 

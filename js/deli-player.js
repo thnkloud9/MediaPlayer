@@ -17,6 +17,7 @@ var deliPlayer = {
     
     /* soundcloud vars */
     soundcloudClientId: 'OtYaDuMCqKGZn5IiRU2EKg',
+    soundcloudDomain: 'http://api.soundcloud.com',
     soundcloudTracks: [],
     soundcloudImages: [],
 
@@ -61,9 +62,6 @@ var deliPlayer = {
 
     init: function(callback) {
         this.initialized = true;
-        SC.initialize({
-            client_id: deliPlayer.soundcloudClientId
-        });
         callback();
     },
 
@@ -328,9 +326,17 @@ var deliPlayer = {
      *
      */
     loadSoundcloudTracks: function(bandName, callback) {
-        SC.get('/tracks', { q: bandName }, function(tracks) {
-            for (var t in tracks) {
-                var track = tracks[t];
+        //SC.get('/tracks', { q: bandName }, function(tracks) {
+        var endpoint = 'tracks.json';
+        var params = [];
+
+        params['q'] = bandName;
+        params['limit'] = 50;
+
+        deliPlayer._sendSoundcloud(endpoint, params, function(results) { 
+            deliPlayer.log('loading soundcloud tracks...');
+            for (var t in results) {
+                var track = results[t];
                 if (track.sharing == 'public') {
                     var popularity = deliPlayer.isTopTrack(bandName, track.title);
                     // filter by top track titles
@@ -451,11 +457,19 @@ var deliPlayer = {
      *
      */
     _sendBandcamp: function(endpoint, params, callback) {
-        var url = deliPlayer.bandcampDomain + '/' + endpoint 
+        var url = deliPlayer.bandcampDomain + '/' + endpoint; 
         
         params['key'] = deliPlayer.bandcampApiKey;
 
         deliPlayer._send(url, params, 'jsonp', callback);
+    },
+    
+    _sendSoundcloud: function(endpoint, params, callback) {
+        var url = deliPlayer.soundcloudDomain + '/' + endpoint;
+
+        params['client_id'] = deliPlayer.soundcloudClientId;
+
+        deliPlayer._send(url, params, '', callback);
     },
 
     _sendLastFM: function(endpoint, params, callback) {

@@ -380,6 +380,12 @@ var deliPlayer = {
             /* get all albums for all matching bands */
             deliPlayer._sendBandcamp(albumEndpoint, albumParams, function(album_results) {
                 //eval(album_results);
+                
+                if (typeof album_results.discography == 'undefined') {
+                    callback();
+                    return false;
+                }
+
                 deliPlayer.addBandcampAlbumIds(album_results);
 
                 var total_albums = album_results.discography.length;

@@ -121,6 +121,10 @@ ol.audio {
     margin: 0 0 10px;
     overflow: hidden;
     }
+    ol.audio > li > a {
+      color: #000;
+      text-decoration: none;
+      }
   ol.audio ul {
     list-style: none;
     }

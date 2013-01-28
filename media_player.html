@@ -4,21 +4,18 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <link rel="stylesheet" href="css/normalize.css" />
-<link rel="stylesheet" href="css/eggplant/jquery-ui-1.9.2.custom.css" />
-<link rel="stylesheet" href="css/skin.css" />
 <link rel="stylesheet" href="css/audiojs_player.css" />
 <link rel="stylesheet" href="css/media_player.css" />
 
 <script type="text/javascript" src="http://swfobject.googlecode.com/svn/trunk/swfobject/swfobject.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 
-<script type="text/javascript" src="js/jquery.jcarousel.min.js"></script>
 <script type="text/javascript" src="js/audiojs/audio.min.js"></script>
 <script type="text/javascript" src="js/underscore-min.js"></script>
 <script type="text/javascript" src="js/async.js"></script>
 <script type="text/javascript" src="js/media-player-init.js"></script>
 
-<script src="js/deli-player.js"></script>
+<script src="js/media-player.js"></script>
 
 <script>
 $(function() {
@@ -125,53 +122,53 @@ $(function() {
     var bandName = (RegExp('band_name=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
 
     // youtube query
-    document.write("<script src='http://gdata.youtube.com/feeds/api/videos?q=" + bandName +"&alt=json-in-script&callback=deliPlayer.addYoutubeVideos&max-results=50&format=5'><\/script>");
+    document.write("<script src='http://gdata.youtube.com/feeds/api/videos?q=" + bandName +"&alt=json-in-script&callback=mediaPlayer.addYoutubeVideos&max-results=50&format=5'><\/script>");
 
     
-    deliPlayer.init(function() {
+    mediaPlayer.init(function() {
 
         // load track list first for filtering
         // anything that relies on track list should go 
         // in the callback
-        deliPlayer.loadTrackList(bandName, function() {
+        mediaPlayer.loadTrackList(bandName, function() {
 
-            deliPlayer.filterYoutubeVideos(bandName, function(videos) {
+            mediaPlayer.filterYoutubeVideos(bandName, function(videos) {
                 displayVideos(videos);
             });
 
-            deliPlayer.loadSoundcloudTracks(bandName, function(tracks) {
-                //console.log(deliPlayer.soundcloudTracks);
+            mediaPlayer.loadSoundcloudTracks(bandName, function(tracks) {
+                //console.log(mediaPlayer.soundcloudTracks);
                 displaySongs('SoundcloudTracks', tracks);
             });
 
-            displaySongs('Previews', deliPlayer.echonestTrackPreviews);
+            displaySongs('Previews', mediaPlayer.echonestTrackPreviews);
 
         });
 
         // echonest links
-        deliPlayer.loadEchonestLinks(bandName, function(links) {
+        mediaPlayer.loadEchonestLinks(bandName, function(links) {
             //console.log(links);
             displayLinks(links);
         });
 
         // last.fm events
-        deliPlayer.loadLastFMEvents(bandName, function(events) {
+        mediaPlayer.loadLastFMEvents(bandName, function(events) {
             //console.log(events); 
             displayEvents(events);
         });
 
         // echonest bios
-        deliPlayer.loadEchonestBios(bandName, function(bios) {
+        mediaPlayer.loadEchonestBios(bandName, function(bios) {
             displayBios(bios);
         });
 
         // echonest similar 
-        deliPlayer.loadEchonestSimilar(bandName, function(similar) {
+        mediaPlayer.loadEchonestSimilar(bandName, function(similar) {
             displaySimilar(similar);
         });
         
         // bandcamp can be loaded without song lists
-        deliPlayer.loadBandcampTracks(bandName, function(tracks) {
+        mediaPlayer.loadBandcampTracks(bandName, function(tracks) {
             displaySongs('BandcampTracks', tracks);
         });
     });
@@ -285,8 +282,8 @@ $(function() {
         }
         output += "</ol>";
 
-        if (deliPlayer.youtubeFilteredVideos.length > 0) {
-            loadVideo(deliPlayer.youtubeFilteredVideos[0].playerUrl, false);
+        if (mediaPlayer.youtubeFilteredVideos.length > 0) {
+            loadVideo(mediaPlayer.youtubeFilteredVideos[0].playerUrl, false);
             
             $('#videos2').html(output);
             /*

@@ -54,6 +54,47 @@ nav.main {
           nav.main ul li a.active:hover {
             top: 0;
             }
+nav.secondary {
+  padding-top: 5px;
+  margin-top: -5px;
+  height: 25px;
+  overflow: hidden;
+  }
+  nav.secondary ul {
+    text-align: center;
+    }
+    nav.secondary ul li {
+      display: inline;
+      }
+      nav.secondary ul li a {
+        position: relative;
+        top: 3px;
+        font-size: 75%;
+        color: #fff;
+        text-decoration: none;
+        background: #333;
+        border-radius: 3px 3px 0 0;
+        padding: 5px 10px;
+        box-shadow: 0 1px 10px #000;
+        text-shadow: 1px 1px #000;
+        }
+      nav.secondary ul li a:hover {
+        top: 2px;
+        }
+      nav.secondary ul li a.active {
+        background: #666;
+        top: 1px;
+        z-index: 100;
+        }
+      nav.secondary ul li a.active:hover {
+        top: 0;
+        }
+  nav.secondary + div {
+    display: block;
+    }
+  nav.secondary div + div {
+    display: none;
+    }
 
 /* set default tab display states */
 .tabs {

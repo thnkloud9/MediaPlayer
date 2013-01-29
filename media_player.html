@@ -102,30 +102,28 @@ $(function() {
                     </nav>
                     <div id='info-tabs-1'>
                         <div id='dp-bios-container'>
-                            <!-- BROKEN -->
-                            <h3>when i click bios this should show</h3>
                         </div>
                     </div> 
                     <div id='info-tabs-2'>
                         <div id='dp-similar-container'>
-                            <!-- BROKEN -->
-                            <h3>when i click similar this should show</h3>
                         </div>
                     </div> 
                     <div id='info-tabs-3'>
                         <div id='dp-events-container'>
-                            <!-- BROKEN -->
-                            <h3>when i click events this should show</h3>
                         </div>
                     </div> 
                     <div id='info-tabs-4'>
                         <div id='dp-links-container'>
-                            <!-- BROKEN -->
-                            <h3>when i click links this should show</h3>
                         </div>
                     </div> 
                 </div>
             </div>
+        </div>
+        <div class='logos-container'>
+            <img src='images/logos/soundcloud.png'>
+            <img src='images/logos/echonest.png'>
+            <img src='images/logos/lastfm.png'>
+            <img src='images/logos/bandcamp.png'>
         </div>
     </div>
 </body>
@@ -187,7 +185,6 @@ $(function() {
 
     function displayEvents(events) {
         output = "<div>";
-        output += "<h4>Events</h4>";
         output += "<ul>";
         for (var e in events) {
             var event = events[e];
@@ -201,7 +198,6 @@ $(function() {
 
     function displayLinks(links) {
         output = "<div>";
-        output += "<h4>Links</h4>";
         output += "<ul>";
         for (var l in links) {
             var link = links[l];
@@ -215,7 +211,6 @@ $(function() {
 
     function displaySimilar(list) {
         output = "<div>";
-        output += "<h4>Similar Artists</h4>";
         output += "<ul>";
         for (var a in list) {
             var artist = list[a];
@@ -231,7 +226,6 @@ $(function() {
    
     function displayBios(list) {
         output = "<div>";
-        output += "<h4>Bios</h4>";
         output += "<ul>";
         for (var b in list) {
             var bio = list[b];

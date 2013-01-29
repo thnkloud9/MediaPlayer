@@ -188,7 +188,16 @@ $(function() {
         output += "<ul>";
         for (var e in events) {
             var event = events[e];
-            output += "<li class='dp-event'>" + event.startDate + ", " + event.venue.name + "</li>";
+
+            output += "<li class='dp-event'><ul>";
+            output += "<li><strong>" + event.startDate + "</strong></li>";
+            if (event.website) {
+                output += "<li><a href='" + event.website + "' target='_blank'>" + event.venue.name + "</a></li>"; 
+            } else {
+                output += "<li>" + event.venue.name + "</li>"; 
+            }
+            output += "<li>" + event.venue.location.city + ", " + event.venue.location.country + "</li>"; 
+            output += "</ul></li>";
         }
         output += "</ul>";
         output += "</div>";
@@ -247,11 +256,19 @@ $(function() {
         output = "<li><h4>" + list + "</h4></li>";
         for (var t = orderedTracks.length - 1; t >= 0; t--) {
             var track = orderedTracks[t];
+            var image = '';
+ 
+            if (track.poster === "" || !track.poster) {
+                var random = Math.floor((Math.random()*(mediaPlayer.allImages.length))+1);
+                image = mediaPlayer.allImages[random];
+            } else {
+                image = track.poster;
+            }
             output += "<li class='audio-link'><a href='#' data-src='" + track.mp3 + "' ";
             output += "data-title='" + track.title + "' ";
             output += "data-artist='" + track.artist + "' ";
-            output += "data-img='" + track.poster + "'>";
-            output += "<img src='" + track.poster + "' width='55px' height='55px' style='float: left;'>";
+            output += "data-img='" + image + "'>";
+            output += "<img src='" + image + "' width='55px' height='55px' style='float: left;'>";
             output += "<span>";
             output += "<ul class='audio-desc'>";
             output += "<li>artist: " + track.artist + "</li>";

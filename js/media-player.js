@@ -51,6 +51,7 @@ var mediaPlayer = {
     allReviews: [],
     allEvents: [],
     allLinks: [],
+    allImages: [],
     
     /* state vars */
     cache: {},
@@ -148,7 +149,10 @@ var mediaPlayer = {
             var song = results.response.songs[s];
             mediaPlayer.topTrackTitles[song.title.toLowerCase()] = song.song_hotttnesss;
             mediaPlayer.allTrackTitles.push(song.title.toLowerCase());
-            mediaPlayer.echonestImages.push(song.release_image);
+            if (song.release_image) {
+                mediaPlayer.echonestImages.push(song.release_image);
+                mediaPlayer.allImages.push(song.release_image);
+            }
 
             for (var t in song.tracks) {
                 var track = song.tracks[t];
@@ -279,7 +283,10 @@ var mediaPlayer = {
             mediaPlayer.lastFMTopTracks.push(track);
             mediaPlayer.topTrackTitles[track.name.toLowerCase()] = parseFloat((parseInt(track.playcount, 10) / parseInt(total_plays, 10)));
             mediaPlayer.allTrackTitles.push(track.name.toLowerCase());
-            mediaPlayer.lastFMImages.push(track.image[2]['#text']);
+            if (track.image[2]['#text']) {
+                mediaPlayer.lastFMImages.push(track.image[2]['#text']);
+                mediaPlayer.allImages.push(track.image[2]['#text']);
+            }
         }
     },
 
@@ -347,7 +354,10 @@ var mediaPlayer = {
                             'popularity': popularity
                         };
                         mediaPlayer.soundcloudTracks.push(playlistTrack);
-                        mediaPlayer.soundcloudImages.push(track.artwork_url);
+                        if (track.artwork_url) {
+                            mediaPlayer.soundcloudImages.push(track.artwork_url);
+                            mediaPlayer.allImages.push(track.artwork_url);
+                        }
                     } 
                 }
             }

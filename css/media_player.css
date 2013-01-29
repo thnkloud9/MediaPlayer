@@ -10,6 +10,11 @@ ol {
   padding: 0;
   }
 
+a {color:#30173a; text-decoration: none; outline:none;}
+a:visited {color:#666666; text-decoration: none;}
+a:focus {outline:none;}
+a:hover, a:active {text-decoration: underline; outline:none;}
+
 .container {
   width: 300px;
   background: #999;
@@ -183,16 +188,18 @@ div.player-container {
 }
 
 .dp-event {
-    font-size: 10px;
+    font-size: 12px;
+    margin-bottom: 12px;
 }
 .dp-link {
-    font-size: 10px;
+    font-size: 12px;
+    margin-bottom: 12px;
 }
 .dp-similar {
-    font-size: 10px;
+    font-size: 12px;
 }
 .dp-bio {
-    font-size: 10px;
+    font-size: 12px;
 }
 
 /* popularity */

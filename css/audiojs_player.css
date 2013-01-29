@@ -24,10 +24,10 @@ p { clear: both; }
   text-overflow: ellipsis; -o-text-overflow: ellipsis; -icab-text-overflow: ellipsis; -khtml-text-overflow: ellipsis; -moz-text-overflow: ellipsis; -webkit-text-overflow: ellipsis; } 
 .audiojs .error-message a { color: #eee; text-decoration: none; padding-bottom: 1px; border-bottom: 1px solid #999; white-space: wrap; } 
 
-.audiojs .play { background: url("/images/player-graphics.gif") -2px -1px no-repeat; } 
-.audiojs .loading { background: url("/images/player-graphics.gif") -2px -31px no-repeat; } 
-.audiojs .error { background: url("/images/player-graphics.gif") -2px -61px no-repeat; } 
-.audiojs .pause { background: url("/images/player-graphics.gif") -2px -91px no-repeat; } 
+.audiojs .play { background: url("../images/player-graphics.gif") -2px -1px no-repeat; } 
+.audiojs .loading { background: url("../images/player-graphics.gif") -2px -31px no-repeat; } 
+.audiojs .error { background: url("../images/player-graphics.gif") -2px -61px no-repeat; } 
+.audiojs .pause { background: url("../images/player-graphics.gif") -2px -91px no-repeat; } 
 
 .playing .play, .playing .loading, .playing .error { display: none; } 
 .playing .pause { display: block; } 

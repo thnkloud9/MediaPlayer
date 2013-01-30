@@ -135,9 +135,8 @@ var mediaPlayer = {
         params['artist'] = bandName;
         params['results'] = 100;
         params['bucket'] = 'song_hotttnesss&bucket=tracks&bucket=id:7digital-US';
-        params['callback'] = 'mediaPlayer.addEchonestTracks';
         mediaPlayer._sendEchonest('song/search', params, function(results) {
-            //eval(results);
+            mediaPlayer.addEchonestTracks(results);
             callback();
         });
     },
@@ -172,9 +171,9 @@ var mediaPlayer = {
         var params = [];
         params['name'] = bandName;
         params['results'] = 100;
-        params['callback'] = 'mediaPlayer.addEchonestBios';
+        //params['callback'] = 'mediaPlayer.addEchonestBios';
         mediaPlayer._sendEchonest('artist/biographies', params, function(results) {
-            //eval(results);
+            mediaPlayer.addEchonestBios(results);
             callback(mediaPlayer.allBios);
 
         });
@@ -192,9 +191,9 @@ var mediaPlayer = {
         var params = [];
         params['name'] = bandName;
         params['results'] = 20;
-        params['callback'] = 'mediaPlayer.addEchonestSimilar';
+        //params['callback'] = 'mediaPlayer.addEchonestSimilar';
         mediaPlayer._sendEchonest('artist/similar', params, function(results) {
-            //eval(results);
+            mediaPlayer.addEchonestSimilar(results);
             callback(mediaPlayer.allSimilar);
         });
     },
@@ -210,9 +209,9 @@ var mediaPlayer = {
     loadEchonestLinks: function(bandName, callback) {
         var params = [];
         params['name'] = bandName;
-        params['callback'] = 'mediaPlayer.addEchonestLinks';
+        //params['callback'] = 'mediaPlayer.addEchonestLinks';
         mediaPlayer._sendEchonest('artist/urls', params, function(results) {
-            //eval(results);
+            mediaPlayer.addEchonestLinks(results);
             callback(mediaPlayer.allLinks);
         });
     },
@@ -237,10 +236,9 @@ var mediaPlayer = {
         mediaPlayer.log('loading lastfm events...');
 
         params['artist'] = bandName;
-        params['callback'] = 'mediaPlayer.addLastFMEvents';
-
+        //params['callback'] = 'mediaPlayer.addLastFMEvents';
         mediaPlayer._sendLastFM('artist.getEvents', params, function(results) {
-            //eval(results);
+            mediaPlayer.addLastFMEvents(results);
             callback(mediaPlayer.allEvents);
  
         });
@@ -259,10 +257,9 @@ var mediaPlayer = {
         var params = [];
         
         params['artist'] = bandName;
-        params['callback'] = 'mediaPlayer.addLastFMTracks';
-
+        //params['callback'] = 'mediaPlayer.addLastFMTracks';
         mediaPlayer._sendLastFM('artist.getTopTracks', params, function(results) {
-            //eval(results);
+            mediaPlayer.addLastFMTracks(results);
             callback();
         });
     },
@@ -283,7 +280,7 @@ var mediaPlayer = {
             mediaPlayer.lastFMTopTracks.push(track);
             mediaPlayer.topTrackTitles[track.name.toLowerCase()] = parseFloat((parseInt(track.playcount, 10) / parseInt(total_plays, 10)));
             mediaPlayer.allTrackTitles.push(track.name.toLowerCase());
-            if (track.image[2]['#text']) {
+            if (track.image) {
                 mediaPlayer.lastFMImages.push(track.image[2]['#text']);
                 mediaPlayer.allImages.push(track.image[2]['#text']);
             }
@@ -476,7 +473,7 @@ var mediaPlayer = {
 
         params['client_id'] = mediaPlayer.soundcloudClientId;
 
-        mediaPlayer._send(url, params, '', callback);
+        mediaPlayer._send(url, params, 'jsonp', callback);
     },
 
     _sendLastFM: function(endpoint, params, callback) {
@@ -486,7 +483,7 @@ var mediaPlayer = {
         params['api_key'] = mediaPlayer.lastFMApiKey;
         params['format'] = 'json';
 
-        mediaPlayer._send(url, params, '', callback);
+        mediaPlayer._send(url, params, 'jsonp', callback);
     },
 
     _sendEchonest: function(endpoint, params, callback) {
@@ -495,7 +492,7 @@ var mediaPlayer = {
         params['api_key'] = mediaPlayer.echonestApiKey;
         params['format'] = 'jsonp';
 
-        mediaPlayer._send(url, params, '', callback);
+        mediaPlayer._send(url, params, 'jsonp', callback);
     },
 
     _send: function(url, params, dataType, callback) {

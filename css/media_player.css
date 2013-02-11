@@ -236,3 +236,17 @@ div.player-container {
     width: auto;
     min-height: 12px;
     }
+
+#dp-bio {
+  font-size: 12px;
+  padding: 7px;
+  font-color: white;
+  }
+
+.dp-small-logo {
+  width: 50px;
+  }
+
+.logos-container {
+  padding: 7px;
+  }

@@ -73,6 +73,9 @@ $(function() {
             <div class='track-details'></div>
         </div>
 
+        <div id='dp-bio'>
+        </div>
+
         <div id='media-tab' class='tabs'>
             <nav class="main">
                 <ul>
@@ -126,6 +129,10 @@ $(function() {
             <img src='images/logos/bandcamp.png'>
         </div>
     </div>
+    <div id='photos-container'>
+        <ul id='dp-imagelist'>
+        </ul>
+    </div>
 </body>
 
 <script type="text/javascript">
@@ -147,7 +154,6 @@ $(function() {
             });
 
             mediaPlayer.loadSoundcloudTracks(bandName, function(tracks) {
-                //console.log(mediaPlayer.soundcloudTracks);
                 displaySongs('SoundcloudTracks', tracks);
             });
 
@@ -157,13 +163,11 @@ $(function() {
 
         // echonest links
         mediaPlayer.loadEchonestLinks(bandName, function(links) {
-            //console.log(links);
             displayLinks(links);
         });
 
         // last.fm events
         mediaPlayer.loadLastFMEvents(bandName, function(events) {
-            //console.log(events); 
             displayEvents(events);
         });
 
@@ -181,7 +185,19 @@ $(function() {
         mediaPlayer.loadBandcampTracks(bandName, function(tracks) {
             displaySongs('BandcampTracks', tracks);
         });
+
     });
+
+    function displayImages(images) {
+        var output = "";
+
+        // place images
+        for (var i in mediaPlayer.allImages) {
+            var image = mediaPlayer.allImages[i];
+            output += "<li><img src='" + image + "'></li>";
+        } 
+        $('#dp-imagelist').append(output); 
+    }
 
     function displayEvents(events) {
         output = "<div>";
@@ -242,6 +258,12 @@ $(function() {
             output += "<p><a href='" + bio.url + "' target='_blank'>" + bio.text.substring(0, 150) + "</a></p>";
             output += "<p>Source: " + bio.site + "</p>";
             output += "</li>";
+
+            if (bio.site === "last.fm") {
+                var topbio = "<span>"+bio.text.substring(0,250) + "...</span>";
+                topbio += "<br /><br /><a href='" + bio.url + "' target='_blank'><img class='dp-small-logo' src='images/logos/lastfm.png'></a>";
+                $('#dp-bio').html(topbio);
+            }
         } 
         output += "</ul>";
         output += "</div>";
@@ -281,13 +303,6 @@ $(function() {
         }        
 
         $('#dp-playlist-audio').prepend(output);
-
-        /*
-        $('.jcarousel').jcarousel({
-            vertical: true,
-            scroll: 2
-        });
-        */ 
     };
 
     function displayVideos(list) {
@@ -309,12 +324,6 @@ $(function() {
             loadVideo(mediaPlayer.youtubeFilteredVideos[0].playerUrl, false);
             
             $('#videos2').html(output);
-            /*
-            $('.videos').jcarousel({
-                vertical: true,
-                scroll: 2
-            });
-            */
         }
     }
 
@@ -324,6 +333,7 @@ $(function() {
             (autoplay?1:0), 'player', '300', '300', '9.0.0', false, 
             false, {allowfullscreen: 'true'});
     }
+
 </script>
 
 </html>

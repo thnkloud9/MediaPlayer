@@ -196,25 +196,28 @@ div.player-container {
     margin-bottom: 12px;
 }
 .dp-similar {
-    font-size: 12px;
-    /* width: 77px; */
-    border: solid 1px #666;
-    -webkit-border-radius: 5px;
-    height: 25px;
-    background-color: #777;
-    text-align: center;
-    display: inline;
+    display: inline-block;
     list-style-type: none;
-    padding: 4px;
-    line-height: 30px;
-    margin-right: 5px;
-    box-shadow: 0 1px 3px #000;
-    text-shadow: 1px 1px #000;
     }
     .dp-similar a {
-        font-size: 9px;
-        font-color: white;
-        }
+      font-size: 12px;
+      border: solid 1px #666;
+      -webkit-border-radius: 5px;
+         -moz-border-radius: 5px;
+          -ms-border-radius: 5px;
+           -o-border-radius: 5px;
+              border-radius: 5px;
+      height: 25px;
+      background-color: #777;
+      text-align: center;
+      padding: 4px;
+      line-height: 30px;
+      margin-right: 5px;
+      box-shadow: 0 1px 3px #000;
+      text-shadow: 1px 1px #000;
+      font-size: 9px;
+      font-color: white;
+      }
 .dp-bio {
     font-size: 12px;
 }

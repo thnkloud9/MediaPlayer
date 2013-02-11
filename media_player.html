@@ -240,7 +240,7 @@ $(function() {
         for (var a in list) {
             var artist = list[a];
             output += "<li class='dp-similar'>";
-            output += "<a href='media_player.html?band_name=" + artist.name + "'>" + artist.name + "</a>";
+            output += " <a href='media_player.html?band_name=" + artist.name + "'>" + artist.name.replace(/ /g,'&nbsp;') + "</a> ";
             output += "</li>";
         } 
         output += "</ul>";

@@ -10,8 +10,8 @@ ol {
   padding: 0;
   }
 
-a {color:#30173a; text-decoration: none; outline:none;}
-a:visited {color:#666666; text-decoration: none;}
+a {color:#fff; text-decoration: none; outline:none;}
+a:visited {color:#fff; text-decoration: none;}
 a:focus {outline:none;}
 a:hover, a:active {text-decoration: underline; outline:none;}
 
@@ -197,7 +197,24 @@ div.player-container {
 }
 .dp-similar {
     font-size: 12px;
-}
+    /* width: 77px; */
+    border: solid 1px #666;
+    -webkit-border-radius: 5px;
+    height: 25px;
+    background-color: #777;
+    text-align: center;
+    display: inline;
+    list-style-type: none;
+    padding: 5px;
+    line-height: 30px;
+    margin-right: 5px;
+    box-shadow: 0 1px 3px #000;
+    text-shadow: 1px 1px #000;
+    }
+    .dp-similar a {
+        font-size: 9px;
+        font-color: white;
+        }
 .dp-bio {
     font-size: 12px;
 }

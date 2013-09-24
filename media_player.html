@@ -17,60 +17,17 @@
 
 <script src="js/media-player.js"></script>
 
-<script>
-$(function() {
-
-    // Setup the player to autoplay the next track
-    var a = audiojs.createAll({
-      css: false,
-      trackEnded: function() {
-        var next = $('.audio-link.playing').next();
-        if (!next.length) next = $('audio-link').first();
-        next.addClass('playing').siblings().removeClass('playing');
-        audio.load($('a', next).attr('data-src'));
-        audio.play();
-      }
-    });
-
-    // Load the audio element
-    var audio = a[0];
-
-    // Load in a track on click
-    $('.audio-link').live('click', function(e) {
-        e.preventDefault();
-        $(this).addClass('playing').siblings().removeClass('playing');
-        audio.load($('a', this).attr('data-src'));
-        audio.play();
-        $('#audio-image-container').html("<img src='" + $('a', this).attr('data-img') + "' width='300px' height='268px'>");
-        var details = $('a', this).attr('data-title') + " <em>by</em> " + $('a', this).attr('data-artist');
-        $('.track-details').html(details);  
-    });
-
-    $('.show-audio').live('click', function() {
-        $('#audio-container').show();
-        $('#video-container').hide();
-    });
-
-    $('.show-video').live('click', function() {
-        audio.pause();
-        $('#audio-container').hide();
-        $('#video-container').show();
-    });
-
-  });
-</script>
-
 </head>
 <body>
     <div class="container">
-        <div id="video-container">
-            <object id="player"></object>
-        </div>
-
         <div id='audio-container'>
             <div id='audio-image-container'><div style='width: 300px; height: 268px;'></div></div>
             <audio></audio>
             <div class='track-details'></div>
+        </div>
+
+        <div id="video-container">
+            <object id="player"></object>
         </div>
 
         <div id='dp-bio'>
@@ -79,20 +36,20 @@ $(function() {
         <div id='media-tab' class='tabs'>
             <nav class="main">
                 <ul>
-                    <li><a href='#tabs-1' rel="tabs-1" class='dp-tab show-video active'>Youtube</a></li>
-                    <li><a href='#tabs-2' rel="tabs-2" class='dp-tab show-audio'>Audio</a></li>
+                    <li><a href='#tabs-1' rel="tabs-1" class='dp-tab show-audio active'>Audio</a></li>
+                    <li><a href='#tabs-2' rel="tabs-2" class='dp-tab show-video'>Youtube</a></li>
                     <li><a href='#tabs-3' rel="tabs-3" class='dp-tab show-info'>Info</a></li>
                 </ul>
             </nav>
             <div id='tabs-1'>
-                <div id="videos2"></div>
-            </div> 
-            <div id='tabs-2'>
                 <div id='dp-playlist-audio-container'>
                     <ol id='dp-playlist-audio' class='audio'>
                     </ol>
                 </div>
             </div>
+            <div id='tabs-2'>
+                <div id="videos2"></div>
+            </div> 
             <div id='tabs-3'>
                 <div id='dp-band-info' class='tabs'>
                     <nav class="secondary">
@@ -136,10 +93,48 @@ $(function() {
 </body>
 
 <script type="text/javascript">
+    // Setup the player to autoplay the next track
+    var a = audiojs.createAll({
+      css: false,
+      trackEnded: function() {
+        var next = $('.audio-link.playing').next();
+        if (!next.length) next = $('audio-link').first();
+        next.addClass('playing').siblings().removeClass('playing');
+        audio.load($('a', next).attr('data-src'));
+        audio.play();
+      }
+    });
+
+    // Load the audio element
+    var audio = a[0];
+
+    // Load in a track on click
+    $('.audio-link').live('click', function(e) {
+        e.preventDefault();
+        $(this).addClass('playing').siblings().removeClass('playing');
+        audio.load($('a', this).attr('data-src'));
+        audio.play();
+        $('#audio-image-container').html("<img src='" + $('a', this).attr('data-img') + "' width='300px' height='268px'>");
+        var details = $('a', this).attr('data-title') + " <em>by</em> " + $('a', this).attr('data-artist');
+        $('.track-details').html(details);  
+    });
+
+    $('.show-audio').live('click', function() {
+        $('#audio-container').show();
+        $('#video-container').hide();
+    });
+
+    $('.show-video').live('click', function() {
+        audio.pause();
+        $('#audio-container').hide();
+        $('#video-container').show();
+    });
+
+
     var bandName = (RegExp('band_name=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
 
     // youtube query
-    document.write("<script src='http://gdata.youtube.com/feeds/api/videos?q=" + bandName +"&alt=json-in-script&callback=mediaPlayer.addYoutubeVideos&max-results=50&format=5'><\/script>");
+    document.write("<script src='http://gdata.youtube.com/feeds/api/videos?q=" + bandName +"+music&alt=json-in-script&max-results=20&format=5&orderby=relevance&callback=mediaPlayer.addYoutubeVideos'><\/script>");
 
     
     mediaPlayer.init(function() {
@@ -153,11 +148,11 @@ $(function() {
                 displayVideos(videos);
             });
 
-            mediaPlayer.loadSoundcloudTracks(bandName, function(tracks) {
-                displaySongs('SoundcloudTracks', tracks);
-            });
+            displaySongs('Previews', mediaPlayer.echonestTrackPreviews, false);
 
-            displaySongs('Previews', mediaPlayer.echonestTrackPreviews);
+            mediaPlayer.loadSoundcloudTracks(bandName, function(tracks) {
+                displaySongs('SoundcloudTracks', tracks, true);
+            });
 
         });
 
@@ -271,7 +266,7 @@ $(function() {
         $('#dp-bios-container').html(output);
     };
  
-    function displaySongs(list, tracks) {
+    function displaySongs(list, tracks, autoload) {
 
         var orderedTracks = _.sortBy(tracks, 'popularity');
 
@@ -286,6 +281,18 @@ $(function() {
             } else {
                 image = track.poster;
             }
+
+	    // autoload the first track
+	    if (autoload) {
+	    	if (t === (orderedTracks.length - 1)) {
+			audio.load(track.mp3);
+			$('#audio-image-container').html("<img src='" + image + "' width='300px' height='268px'>");
+			var details = track.title + " <em>by</em> " + track.artist;
+			$('.track-details').html(details);
+			audio.play();
+	    	}
+	    }
+
             output += "<li class='audio-link'><a href='#' data-src='" + track.mp3 + "' ";
             output += "data-title='" + track.title + "' ";
             output += "data-artist='" + track.artist + "' ";
@@ -306,9 +313,11 @@ $(function() {
     };
 
     function displayVideos(list) {
-        var orderedVideos = _.sortBy(list, 'popularity');
+        //var orderedVideos = _.sortBy(list, 'popularity');
+        var orderedVideos = list;
         var output = '<ol class="videos">';
 
+	list.reverse();
         for (var v = orderedVideos.length - 1; v >= 0; v--) {
             var video = orderedVideos[v];
              

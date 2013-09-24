@@ -36,7 +36,7 @@
         <div id='media-tab' class='tabs'>
             <nav class="main">
                 <ul>
-                    <li><a href='#tabs-1' rel="tabs-1" class='dp-tab show-audio active'>Audio</a></li>
+                    <li><a href='#tabs-1' rel="tabs-1" class='dp-tab show-audio'>Audio</a></li>
                     <li><a href='#tabs-2' rel="tabs-2" class='dp-tab show-video'>Youtube</a></li>
                     <li><a href='#tabs-3' rel="tabs-3" class='dp-tab show-info'>Info</a></li>
                 </ul>
@@ -132,6 +132,7 @@
 
 
     var bandName = (RegExp('band_name=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
+    var displayAudio = (RegExp('display_audio=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
 
     // youtube query
     document.write("<script src='http://gdata.youtube.com/feeds/api/videos?q=" + bandName +"+music&alt=json-in-script&max-results=20&format=5&orderby=relevance&callback=mediaPlayer.addYoutubeVideos'><\/script>");
@@ -151,7 +152,7 @@
             displaySongs('Previews', mediaPlayer.echonestTrackPreviews, false);
 
             mediaPlayer.loadSoundcloudTracks(bandName, function(tracks) {
-                displaySongs('SoundcloudTracks', tracks, true);
+                displaySongs('SoundcloudTracks', tracks, displayAudio);
             });
 
         });
@@ -182,6 +183,17 @@
         });
 
     });
+
+    // make appropriate tab active
+    if (displayAudio) {
+	setTimeout(function() {
+	    $('.show-audio').trigger('click');
+	}, 5000);
+    } else {
+	setTimeout(function() {
+	    $('.show-video').trigger('click');
+	}, 5000);
+    }
 
     function displayImages(images) {
         var output = "";

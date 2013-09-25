@@ -133,9 +133,15 @@
 
     var bandName = (RegExp('band_name=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
     var displayAudio = (RegExp('display_audio=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
+    var bandNameWords = bandName.split("%20");
+    if (bandNameWords.length < 2) {
+	var searchString = bandName + "+music";
+    } else {
+	var searchString = bandName;
+    }
 
     // youtube query
-    document.write("<script src='http://gdata.youtube.com/feeds/api/videos?q=" + bandName +"+music&alt=json-in-script&max-results=20&format=5&orderby=relevance&callback=mediaPlayer.addYoutubeVideos'><\/script>");
+    document.write("<script src='http://gdata.youtube.com/feeds/api/videos?q=" + searchString +"&alt=json-in-script&max-results=20&format=5&orderby=relevance&callback=mediaPlayer.addYoutubeVideos'><\/script>");
 
     
     mediaPlayer.init(function() {

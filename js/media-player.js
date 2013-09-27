@@ -106,10 +106,10 @@ var mediaPlayer = {
             var video = mediaPlayer.youtubeVideos[v];
             var popularity = mediaPlayer.isTopTrack(bandName, video.title);
 
-            if (popularity) {
+            //if (popularity) {
                 video.popularity = popularity; 
                 mediaPlayer.youtubeFilteredVideos.push(video);
-            }
+            //}
 
         }
 
@@ -294,6 +294,12 @@ var mediaPlayer = {
     isTopTrack: function(bandName, trackTitle) {
         // remove band name from title
         var modifiedTitle = trackTitle.toLowerCase().replace(bandName.toLowerCase() + ' - ', '').trim();
+
+	// remove remix and cover tracks
+	if ((modifiedTitle.indexOf('cover')) ||
+	    (modifiedTitle.indexOf('remix'))) {
+	    return false;
+	}
 
         // quick match
         if (($.isEmptyObject(mediaPlayer.topTrackTitles)) ||

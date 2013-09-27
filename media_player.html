@@ -20,6 +20,10 @@
 </head>
 <body>
     <div class="container">
+        <div id='loading-container'>
+            <div style='width: 300px; height: 600px;'>LOADING</div>
+        </div>
+
         <div id='audio-container'>
             <div id='audio-image-container'><div style='width: 300px; height: 268px;'></div></div>
             <audio></audio>
@@ -36,9 +40,9 @@
         <div id='media-tab' class='tabs'>
             <nav class="main">
                 <ul>
-                    <li><a href='#tabs-1' rel="tabs-1" class='dp-tab show-audio'>Audio</a></li>
-                    <li><a href='#tabs-2' rel="tabs-2" class='dp-tab show-video'>Youtube</a></li>
-                    <li><a href='#tabs-3' rel="tabs-3" class='dp-tab show-info'>Info</a></li>
+                    <li><a href='#tabs-1' rel="tabs-1" class='dp-tab show-audio'>AUDIO</a></li>
+                    <li><a href='#tabs-2' rel="tabs-2" class='dp-tab show-video'>VIDEO</a></li>
+                    <li><a href='#tabs-3' rel="tabs-3" class='dp-tab show-info'>SHOWS + SIMILAR</a></li>
                 </ul>
             </nav>
             <div id='tabs-1'>
@@ -54,25 +58,20 @@
                 <div id='dp-band-info' class='tabs'>
                     <nav class="secondary">
                         <ul>
-                            <li><a href='#info-tabs-1' rel="info-tabs-1" class='dp-tab active'>Bios</a><li>
-                            <li><a href='#info-tabs-2' rel="info-tabs-2" class='dp-tab'>Similar</a><li>
-                            <li><a href='#info-tabs-3' rel="info-tabs-3" class='dp-tab'>Events</a><li>
-                            <li><a href='#info-tabs-4' rel="info-tabs-4" class='dp-tab'>Links</a><li>
+                            <li><a href='#info-tabs-1' rel="info-tabs-1" class='dp-tab active'>SIMILAR</a><li>
+                            <li><a href='#info-tabs-2' rel="info-tabs-2" class='dp-tab'>EVENTS</a><li>
+                            <li><a href='#info-tabs-3' rel="info-tabs-3" class='dp-tab'>LINKS</a><li>
                         </ul>
                     </nav>
                     <div id='info-tabs-1'>
-                        <div id='dp-bios-container'>
-                        </div>
-                    </div> 
-                    <div id='info-tabs-2'>
                         <div id='dp-similar-container'>
                         </div>
                     </div> 
-                    <div id='info-tabs-3'>
+                    <div id='info-tabs-2'>
                         <div id='dp-events-container'>
                         </div>
                     </div> 
-                    <div id='info-tabs-4'>
+                    <div id='info-tabs-3'>
                         <div id='dp-links-container'>
                         </div>
                     </div> 
@@ -135,9 +134,9 @@
     var displayAudio = (RegExp('display_audio=' + '(.+?)(&|$)').exec(location.search)||[,null])[1];
     var bandNameWords = bandName.split("%20");
     if (bandNameWords.length < 2) {
-	var searchString = bandName + "+official+music";
+	var searchString = bandName + "+official";
     } else {
-	var searchString = bandName;
+	var searchString = bandName + "+official";
     }
 
     // youtube query
@@ -173,7 +172,7 @@
             displayEvents(events);
         });
 
-        // echonest bios
+	// echonest bios
         mediaPlayer.loadEchonestBios(bandName, function(bios) {
             displayBios(bios);
         });
@@ -194,10 +193,12 @@
     if (displayAudio) {
 	setTimeout(function() {
 	    $('.show-audio').trigger('click');
+	    $('#loading-container').hide();
 	}, 5000);
     } else {
 	setTimeout(function() {
 	    $('.show-video').trigger('click');
+	    $('#loading-container').hide();
 	}, 5000);
     }
 
@@ -261,29 +262,18 @@
 
         $('#dp-similar-container').html(output);
     };
-   
+
     function displayBios(list) {
-        output = "<div>";
-        output += "<ul>";
         for (var b in list) {
             var bio = list[b];
-            output += "<li class='dp-bio'>";
-            output += "<p><a href='" + bio.url + "' target='_blank'>" + bio.text.substring(0, 150) + "</a></p>";
-            output += "<p>Source: " + bio.site + "</p>";
-            output += "</li>";
-
             if (bio.site === "last.fm") {
                 var topbio = "<span>"+bio.text.substring(0,250) + "...</span>";
                 topbio += "<br /><br /><a href='" + bio.url + "' target='_blank'><img class='dp-small-logo' src='images/logos/lastfm.png'></a>";
                 $('#dp-bio').html(topbio);
             }
         } 
-        output += "</ul>";
-        output += "</div>";
-
-        $('#dp-bios-container').html(output);
     };
- 
+   
     function displaySongs(list, tracks, autoload) {
 
         var orderedTracks = _.sortBy(tracks, 'popularity');
@@ -348,7 +338,7 @@
         output += "</ol>";
 
         if (mediaPlayer.youtubeFilteredVideos.length > 0) {
-            loadVideo(mediaPlayer.youtubeFilteredVideos[0].playerUrl, false);
+            loadVideo(mediaPlayer.youtubeFilteredVideos[mediaPlayer.youtubeFilteredVideos.length-1].playerUrl, true);
             
             $('#videos2').html(output);
         }
